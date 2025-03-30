@@ -6,9 +6,10 @@ import { UserModule } from './user/user.module';
 import { ChatModule } from './chat/chat.module';
 import { DatabaseService } from './database/database.service';
 import { ConfigService } from './config/config.service';
+import { ConfigModule } from './config/config.module';
 
 @Module({
-  imports: [AuthModule, UserModule, ChatModule],
+  imports: [AuthModule, UserModule, ChatModule, ConfigModule],
   controllers: [AppController],
   providers: [AppService, DatabaseService, ConfigService],
 })
