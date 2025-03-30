@@ -35,6 +35,7 @@ export class AuthController {
         .status(200) // 상태코드 지정
         .json({
         accessToken: accessToken,
+        nickname: authEntity.nickname,
         });
     }
     @Post('auth/signup')
@@ -53,7 +54,7 @@ export class AuthController {
     // 계정이 존재하는 경우
     if (authEntity !== undefined) {
       // 로그인 실패 응답
-        return res.status(401);
+        return res.status(401).end();
     }
 
 
@@ -74,6 +75,6 @@ export class AuthController {
     authLogout(@Res() res: Response) {
     // 쿠키 토큰 삭제
     res.clearCookie('access_token');
-    return res.status(200);
+    return res.status(200).end();
     }
 }
