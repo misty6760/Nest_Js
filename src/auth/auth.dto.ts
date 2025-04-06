@@ -1,9 +1,4 @@
-import {
-    IsNotEmpty,
-    IsString,
-    Length
-} from "class-validator";
-
+import { IsNotEmpty, IsString, Length } from 'class-validator';
 
 export class AuthLoginRequestDto {
     @IsString()
@@ -42,6 +37,6 @@ export class AuthSignupResponseDto {
     @IsString()
     @Length(3, 20)
     nickname: string;
-
+    
     accessToken: string;
 }
