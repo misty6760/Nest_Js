@@ -34,6 +34,7 @@
     "cookies-parser": "^1.2.0",
     "g": "^2.0.1",
     "npm": "^11.2.0",
+    "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "uuid": "^11.1.0"

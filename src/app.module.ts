@@ -7,9 +7,10 @@ import { ChatModule } from './chat/chat.module';
 import { DatabaseService } from './database/database.service';
 import { ConfigService } from './config/config.service';
 import { ConfigModule } from './config/config.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [AuthModule, UserModule, ChatModule, ConfigModule],
+  imports: [AuthModule, UserModule, ChatModule, ConfigModule, JwtModule.register({global: true})],
   controllers: [AppController],
   providers: [AppService, DatabaseService, ConfigService],
 })

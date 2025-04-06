@@ -1,6 +1,7 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
+import { AuthAccessTokenGuard } from './auth.guard';
 
 @Controller()
 export class AuthController {
@@ -71,6 +72,7 @@ export class AuthController {
         nickname: nickname,
     });
     }
+    @UseGuards(AuthAccessTokenGuard)
     @Post('auth/logout')
     authLogout(@Res() res: Response) {
     // 쿠키 토큰 삭제
