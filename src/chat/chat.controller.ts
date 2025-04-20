@@ -33,7 +33,7 @@ export class ChatController {
 
   // 사용자의 채팅방 목록을 조회하는 엔드포인트
   @UseGuards(AuthAccessTokenGuard)
-  @Get('rooms')
+  @Get('chat/rooms')
   async chatRooms(
     @AuthInfo() { id }: AccessTokenPayload,
   ): Promise<ChatRoomsResponseDto> {
@@ -45,7 +45,7 @@ export class ChatController {
 
   // 특정 채팅방의 정보를 조회하는 엔드포인트
   @UseGuards(AuthAccessTokenGuard)
-  @Get('rooms/:roomId')
+  @Get('chat/rooms/:roomId')
   async chatRoomInfo(
     @Param('roomId') roomIdStr: string,
   ): Promise<ChatRoomInfoResponseDto> {
@@ -70,7 +70,7 @@ export class ChatController {
 
   // 새로운 채팅방을 생성하는 엔드포인트
   @UseGuards(AuthAccessTokenGuard)
-  @Post('rooms')
+  @Post('chat/rooms')
   async chatRoomCreate(
     @Body() { participantid }: ChatRoomCreateRequestDto,
     @AuthInfo() authInfo: AccessTokenPayload,
