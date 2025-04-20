@@ -1,77 +1,95 @@
-import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
+// 인증 관련 컨트롤러
+import { Body, Controller, Post, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
-import { AuthAccessTokenGuard } from './auth.guard';
+import { AuthLoginRequestDto, AuthLoginResponseDto, AuthSignupRequestDto, AuthSignupResponseDto } from './auth.dto';
 
-@Controller()
+@Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
-    @Post('auth/login')
+
+    // 로그인 처리
+    @Post('login')
     async authLogin(
-    @Body() { id, password }: { id: string; password: string },
-    @Res() res: Response,
-    ): 
-    Promise<Response> {
-    const authEntity = this.authService.getAccount(id, password);
+        @Body() authLoginDto: AuthLoginRequestDto,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<AuthLoginResponseDto> {
+        // 사용자 이름과 비밀번호 추출
+        const { username, password } = authLoginDto;
 
-    // 계정이 유효하지 않은 경우
-    if (authEntity === undefined) {
-      // 로그인 실패 응답
-        return res.status(401);
-    }
+        // 계정 정보 확인
+        const authEntity = await this.authService.getAccount(username, password);
+        if(!authEntity) {
+            throw new UnauthorizedException('아이디 또는 비밀번호가 잘못되었습니다.');
+        }
+        // 필요한 정보 추출
+        const { nickname, publicKey, encryptedPrivateKey } = authEntity;
 
-    // 계정이 유효한 경우 access token 발급
-    const accessToken = await this.authService.createAccessToken({
-        id: id,
-        nickname: authEntity.nickname,
-    });
-
-    // 쿠키에 토큰 저장
-    res.setHeader('Authorization', `Bearer ${accessToken}`);
-    res.cookie('access_token', accessToken, { httpOnly: true });
-    // 로그인 성공 응답
-    return res
-      .status(200) // 상태코드 지정
-        .json({
-        accessToken: accessToken,
-        nickname: authEntity.nickname,
+        // 액세스 토큰 생성
+        const accessToken = await this.authService.createAccessToken({
+            id: authEntity.id,
+            nickname: authEntity.nickname,
         });
+
+        // 쿠키에 액세스 토큰 설정
+        res.cookie('access_token', accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+        });
+
+        // 응답 데이터 반환
+        return {
+            accessToken,
+            nickname,
+            publicKey,
+            encryptedPrivateKey,
+            id: authEntity.id,
+        };
     }
-    @Post('auth/signup')
+
+    // 회원가입 처리
+    @Post('signup')
     async authSignup(
-    @Res() res: Response,
-    @Body()
-    {
-        id,
-        password,
-        nickname,
-    }: { id: string; password: string; nickname: string },
-    ): Promise<Response> {
-    const authEntity = this.authService.getAccount(id, password);
+        @Body() authSignupDto: AuthSignupRequestDto,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<AuthSignupResponseDto> {
+        // 사용자 입력 데이터 추출
+        const { username, password, nickname } = authSignupDto;
 
-    // 계정이 존재하는 경우
-    if (authEntity !== undefined) {
-      // 로그인 실패 응답
-        return res.status(401).end();
-    }
+        // 기존 사용자 확인
+        const existingUser = await this.authService.getAccount(username, password);
+        if (existingUser !== null) {
+            throw new UnauthorizedException('이미 존재하는 아이디입니다.');
+        }
 
-    // 계정이 없는 경우 가입 진행
-    // access token 발급
-    const accessToken = await this.authService.createAccessToken({
-        id: id,
-        nickname: nickname,
-    });
+        // 새 계정 생성
+        const newUser = await this.authService.createAccount(
+            username, password, nickname
+        );
+        if(!newUser) {
+            throw new UnauthorizedException('회원가입에 실패했습니다.');
+        }
 
-    return res.status(200).json({
-        accessToken: accessToken,
-        nickname: nickname,
-    });
-    }
-    @UseGuards(AuthAccessTokenGuard)
-    @Post('auth/logout')
-    authLogout(@Res() res: Response) {
-        // 쿠키 토큰 삭제
-        res.clearCookie('access_token');
-        return res.status(200).end();
+        // 액세스 토큰 생성
+        const accessToken = await this.authService.createAccessToken({
+            id: newUser.id,
+            nickname: newUser.nickname,
+        });
+
+        // 쿠키에 액세스 토큰 설정
+        res.cookie('access_token', accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+        });
+
+        // 응답 데이터 반환
+        return {
+            accessToken,
+            nickname,
+            publicKey: newUser.publicKey,
+            encryptedPublicKey: newUser.encryptedPrivateKey,
+        };
     }
 }

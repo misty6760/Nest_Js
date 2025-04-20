@@ -1,9 +1,11 @@
-# compiled output
+# 이 파일은 Git이 무시해야 할 파일과 디렉토리를 지정합니다.
+
+# 컴파일된 출력물
 /dist
 /node_modules
 /build
 
-# Logs
+# 로그 파일
 logs
 *.log
 npm-debug.log*
@@ -12,14 +14,14 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-# OS
+# 운영 체제 관련 파일
 .DS_Store
 
-# Tests
+# 테스트 관련 파일
 /coverage
 /.nyc_output
 
-# IDEs and editors
+# IDE 및 편집기 관련 파일
 /.idea
 .project
 .classpath
@@ -28,29 +30,29 @@ lerna-debug.log*
 .settings/
 *.sublime-workspace
 
-# IDE - VSCode
+# Visual Studio Code 관련 파일
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# dotenv environment variable files
+# 환경 변수 파일
 .env
 .env.development.local
 .env.test.local
 .env.production.local
 .env.local
 
-# temp directory
+# 임시 디렉토리
 .temp
 .tmp
 
-# Runtime data
+# 런타임 데이터
 pids
 *.pid
 *.seed
 *.pid.lock
 
-# Diagnostic reports (https://nodejs.org/api/report.html)
+# 진단 보고서 (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
