@@ -24,7 +24,7 @@ export class ChatRoomCreateRequestDto {
   @IsArray()
   @ArrayNotEmpty()
   @IsMongoId({ each: true })
-  participantid: Types.ObjectId[]; // 참가자 ID 배열
+  participantIds: Types.ObjectId[]; // 참가자 ID 배열
 }
 
 // 채팅방 생성 응답 DTO

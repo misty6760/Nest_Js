@@ -9,9 +9,14 @@ import { Expose } from "class-transformer";
 // 채팅방 정보를 담는 DTO 클래스
 export class ChatRoomDto {
   // ChatRoomDocument로부터 DTO 객체를 생성하는 생성자
-  constructor(chatroomDocument: ChatRoomDocument) {
+  constructor(chatroomDocument: ChatRoomDocument, userid: string) {
     this.id = chatroomDocument.id;
     this.name = chatroomDocument.name;
+    this.publicKey = chatroomDocument.publicKey;
+    this.encryptedPrivateKey =
+    chatroomDocument.encryptedPrivateKeys.find(
+      (it) => it.userId.toString() == userid,
+    )?.encryptedKey ?? '';
   }
 
   // 채팅방의 고유 식별자
@@ -23,4 +28,12 @@ export class ChatRoomDto {
   @Expose()
   @IsString()
   name: string;
+
+  @Expose()
+  @IsString()
+  publicKey: string;
+
+  @Expose()
+  @IsString()
+  encryptedPrivateKey: string;
 }

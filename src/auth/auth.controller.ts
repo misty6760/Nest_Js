@@ -33,9 +33,9 @@ export class AuthController {
 
         // 쿠키에 액세스 토큰 설정
         res.cookie('access_token', accessToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'strict',
+            // httpOnly: true,
+            // secure: true,
+            // sameSite: 'strict',
         });
 
         // 응답 데이터 반환
@@ -79,9 +79,9 @@ export class AuthController {
 
         // 쿠키에 액세스 토큰 설정
         res.cookie('access_token', accessToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'strict',
+            // httpOnly: true,
+            // secure: true,
+            // sameSite: 'strict',
         });
 
         // 응답 데이터 반환

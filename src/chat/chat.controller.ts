@@ -24,7 +24,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { UserInfoDto } from 'src/common/dto/userinfo.dto';
 
 // 채팅 관련 컨트롤러
-@Controller('chat')
+@Controller()
 export class ChatController {
   constructor(
     private readonly chatService: ChatService,
@@ -40,7 +40,7 @@ export class ChatController {
     const chatrooms = await this.chatService.getChatRooms(
       new Types.ObjectId(id),
     );
-    return { chatrooms: chatrooms.map((it) => new ChatRoomDto(it)) };
+    return { chatrooms: chatrooms.map((it) => new ChatRoomDto(it, id)) };
   }
 
   // 특정 채팅방의 정보를 조회하는 엔드포인트
@@ -70,14 +70,14 @@ export class ChatController {
 
   // 새로운 채팅방을 생성하는 엔드포인트
   @UseGuards(AuthAccessTokenGuard)
-  @Post('chat/rooms')
+  @Post('chat/rooms/create')
   async chatRoomCreate(
-    @Body() { participantid }: ChatRoomCreateRequestDto,
+    @Body() { participantIds }: ChatRoomCreateRequestDto,
     @AuthInfo() authInfo: AccessTokenPayload,
   ): Promise<ChatRoomCreateResponseDto> {
     // 참가자들의 계정 정보를 조회
-    const users = await this.chatService.getAccounts(participantid);
-    if (participantid.length != users.length) {
+    const users = await this.chatService.getAccounts(participantIds);
+    if (participantIds.length != users.length) {
       throw new NotFoundException('일부 유저들을 찾을 수 없습니다.');
     }
 
